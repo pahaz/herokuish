@@ -43,6 +43,7 @@ if isinstance(m, dict):
 " $@
 }
 
+export SELF=$0
 cd $(dirname $(readlink -f $0))
 source "include/herokuish.bash"
 source "include/fn.bash"
