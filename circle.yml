@@ -10,4 +10,5 @@ dependencies:
     - make build
 
 test:
-  - make test
+  override:
+    - make test
