@@ -1,4 +1,4 @@
-# herokuish [![Circle CI](https://circleci.com/gh/gliderlabs/herokuish.png?style=shield)](https://circleci.com/gh/gliderlabs/herokuish)
+# herokuish [![Circle CI](https://circleci.com/gh/pahaz/herokuish.png?style=shield)](https://circleci.com/gh/pahaz/herokuish)
 
 A command line tool for emulating Heroku build and runtime tasks in containers.
 
