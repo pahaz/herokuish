@@ -6,6 +6,7 @@ dependencies:
   pre:
     - rm ~/.gitconfig
     - make deps
+    - make test-deps
   override:
     - make build
 
