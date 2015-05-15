@@ -5,8 +5,7 @@ machine:
 dependencies:
   pre:
     - rm ~/.gitconfig
-    - make deps
-    - make test-deps
+    - sudo make test-deps
   override:
     - make build
 
