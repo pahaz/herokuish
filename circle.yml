@@ -10,12 +10,4 @@ dependencies:
     - make build
 
 test:
-  override:
-    - basht:
-        parallel: true
-        files:
-          - tests/**/tests.sh
-    - basht:
-        parallel: true
-        files:
-          - buildpacks/*/tests/*/test.sh
+  - make test
