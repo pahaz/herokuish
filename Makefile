@@ -19,11 +19,13 @@ deps-go:
 	#apt-get update
 	apt-get install golang -y
 	mkdir ${ROOT_DIR}/.go || true
+	go version
 
 deps-docker:
 	# http://docs.docker.com/installation/ubuntulinux/
 	@command -v docker > /dev/null || curl -sSL https://get.docker.io/ubuntu/ | sudo sh
 	sleep 2 # give docker a moment i guess
+	docker version
 
 runtime-deps:
 	apt-get install python-yaml -y  # python yaml parser for herokuish.bash
@@ -33,6 +35,8 @@ test-deps: runtime-deps deps-go
 	go get -u github.com/progrium/basht/...
 
 test: test-deps
+	docker version
+	go version
 	basht tests/*/tests.sh
 	basht buildpacks/*/tests/*/test.sh
 
