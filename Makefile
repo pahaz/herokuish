@@ -14,11 +14,10 @@ build:
 	@docker build -t $(NAME):dev .
 
 deps-go:
-	#apt-get install python-software-properties -y # 12.04
-	#add-apt-repository ppa:duh/golang -y
-	#apt-get update
+	apt-get install python-software-properties -y # 12.04
+	add-apt-repository ppa:duh/golang -y
+	apt-get update
 	apt-get install golang -y
-	mkdir ${ROOT_DIR}/.go || true
 	go version
 
 deps-docker:
@@ -31,7 +30,8 @@ runtime-deps:
 	apt-get install python-yaml -y  # python yaml parser for herokuish.bash
 	apt-get install daemontools -y  # setuidgid (runs another program under a specified account's uid and gid) for include/herokuish.bash
 
-test-deps: runtime-deps deps-go
+test-deps: runtime-deps
+	mkdir ${ROOT_DIR}/.go || true
 	go get -u github.com/progrium/basht/...
 
 test: test-deps
