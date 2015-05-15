@@ -5,6 +5,7 @@ ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
 GOPATH:=${ROOT_DIR}/.go
 PATH:=$(PATH):${GOPATH}/bin
+export DEBIAN_FRONTEND=noninteractive
 
 build:
 	cat buildpacks/*/buildpack* | sed 'N;s/\n/ /' > include/buildpacks.txt
