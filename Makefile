@@ -20,6 +20,7 @@ deps-docker:
 deps:
 	docker pull heroku/cedar:14
 	go get -u github.com/progrium/basht/...
+	apt-get install python-yaml  # required for herokuish.bash
 
 test:
 	basht tests/*/tests.sh
