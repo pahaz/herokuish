@@ -1,6 +1,0 @@
-FROM heroku/cedar:14
-COPY ./build/linux/herokuish /bin/herokuish
-RUN /bin/herokuish buildpack install \
-	&& ln -s /bin/herokuish /build \
-	&& ln -s /bin/herokuish /start \
-	&& ln -s /bin/herokuish /exec

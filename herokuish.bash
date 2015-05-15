@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -eo pipefail
 
 asset-cat() {
         if [[ ! -f $1 ]]; then
@@ -44,6 +43,7 @@ if isinstance(m, dict):
 " $@
 }
 
+cd $(dirname $(readlink -f $0))
 source "include/herokuish.bash"
 source "include/fn.bash"
 source "include/cmd.bash"
