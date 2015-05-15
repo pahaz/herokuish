@@ -22,7 +22,7 @@ deps:
 	go get -u github.com/progrium/basht/...
 
 test:
-	$(GOPATH)/bin/basht tests/*/tests.sh
-	$(GOPATH)/bin/basht buildpacks/*/tests/*/test.sh
+	basht tests/*/tests.sh
+	basht buildpacks/*/tests/*/test.sh
 
 .PHONY: build
