@@ -19,9 +19,3 @@ test:
         parallel: true
         files:
           - buildpacks/*/tests/*/test.sh
-
-deployment:
-  release:
-    branch: release
-    commands:
-      - make release
