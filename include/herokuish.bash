@@ -114,11 +114,17 @@ herokuish-test() {
 	echo "::: TEST FINISHED :::"
 }
 
+is-not-empty() {
+    if [[ -d "$1" && ! -z "$(ls -A $1)" ]]; then
+        return 1
+    fi
+    return 0
+}
 
 main() {
 	set -eo pipefail; [[ "$TRACE" ]] && set -x
 
-	if [[ -d "$import_path" ]]; then
+	if is-not-empty "$import_path"; then
 		rm -rf "$app_path" && cp -r "$import_path" "$app_path"
 	fi
 
