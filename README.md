@@ -1,7 +1,7 @@
 # herokuish [![Circle CI](https://circleci.com/gh/pahaz/herokuish.png?style=shield)](https://circleci.com/gh/pahaz/herokuish)
 
-This project is a fork of https://github.com/gliderlabs/herokuish project. 
-The key difference of the project is the absence of the Go language in core logic.
+This is a fork of https://github.com/gliderlabs/herokuish project. 
+The key difference of the project is the absence of the Go language in the core logic.
 
 ## HowTo Use this project
 
