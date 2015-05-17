@@ -115,10 +115,7 @@ herokuish-test() {
 }
 
 is-not-empty() {
-    if [[ -d "$1" && ! -z "$(ls -A $1)" ]]; then
-        return 1
-    fi
-    return 0
+    [[ -d "$1" && ! -z "$(ls -A $1)" ]]
 }
 
 main() {
