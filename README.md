@@ -1,165 +1,33 @@
 # herokuish [![Circle CI](https://circleci.com/gh/pahaz/herokuish.png?style=shield)](https://circleci.com/gh/pahaz/herokuish)
 
-A command line tool for emulating Heroku build and runtime tasks in containers.
+This project is a fork of https://github.com/gliderlabs/herokuish project. 
+The key difference of the project is the absence of the Go language in core logic.
 
-Herokuish is made for platform authors. The project consolidates and decouples Heroku compatibility logic (running buildpacks, parsing Procfile) and supporting workflow (importing/exporting slugs) from specific platform images like those in Dokku/Buildstep, Deis, Flynn, etc.
+## HowTo Use this project
 
-The goal is to be the definitive, well maintained and heavily tested Heroku emulation utility shared by all. It is complemented by [progrium/cedarish](https://github.com/progrium/cedarish), which focuses on reproducing the base Heroku system image. Together they form a toolkit for achieving Heroku compatibility.
-
-Herokuish is a community project and is in no way affiliated with Heroku.
-
-## Getting herokuish
-
-Download and uncompress the latest binary tarball from [releases](https://github.com/gliderlabs/herokuish/releases).
-
-For example, you can do this directly in your Dockerfiles installing into `/bin` as one step:
-
-```
-RUN curl --silent http://dl.gliderlabs.com/herokuish/latest/linux_x86_64.tgz \
-		  | tar -xzC /bin
-```
-
-Herokuish depends on Bash (4.0 or newer) and a handful of standard GNU utilties you probably have. It likely won't work on Busybox, though neither will any Heroku buildpacks.
-
-## Using herokuish
-
-Herokuish is meant to work behind the scenes inside a container. It tries not to force decisions about how you construct and operate containers. In fact, there's nothing that even ties it specifically to Docker. It focuses on neatly emulating Heroku, letting you design and orchestrate containers around it.
-
-```
-$ herokuish
-
-Available commands:
-  buildpack                Use and install buildpacks
-    build                    Build an application using installed buildpacks
-    install                  Install buildpack from Git URL and optional committish
-    list                     List installed buildpacks
-  help                     Shows help information for a command
-  paths                    Shows path settings
-  procfile                 Use Procfiles and run app commands
-    exec                     Run as unprivileged user with Heroku-like env
-    parse                    Get command string for a process type from Procfile
-    start                    Run process type command from Procfile through exec
-  slug                     Manage application slugs
-    export                   Export generated slug tarball to URL (PUT) or STDOUT
-    generate                 Generate a gzipped slug tarball from the current app
-    import                   Import a gzipped slug tarball from URL or STDIN
-  test                     Test running an app through Herokuish
-  version                  Show version and supported version info
-
-```
-
-Main functionality revolves around buildpack commands, procfile/exec commands, and slug commands. They are made to work together, but can be used independently or not at all.
-
-For example, build processes that produce Docker images without producing intermediary slugs can ignore slug commands. Similarly, non-buildpack runtime images such as [google/python-runtime](https://github.com/GoogleCloudPlatform/python-docker/tree/master/runtime) might find procfile commands useful just to support Procfiles.
-
-#### Buildpacks
-
-Herokuish does not come with any buildpacks, but it is tested against recent versions of Heroku supported buildpacks. You can see this information with `herokuish version`. Example output:
-
-```
-$ herokuish version
-herokuish: 0.3.0
-buildpacks:
-  heroku-buildpack-multi     cddec34
-  heroku-buildpack-nodejs    v60
-  heroku-buildpack-php       v43
-  heroku-buildpack-python    v52
-  heroku-buildpack-ruby      v127
-  ...
-```
-
-You can install all supported buildpacks with `herokuish buildpack install`, or you can manually install buildpacks individually with `herokuish buildpack install <url> [committish]`. You can also mount a directory containing your platform's supported buildpacks (see Paths, next section), or you could bake your supported buildpacks into an image. These are the types of decisions that are up to you.
-
-#### Paths
-
-Use `herokuish paths` to see relevant system paths it uses. You can use these to import or mount data for use inside a container. They can also be overridden by setting the appropriate environment variable.
-
-```
-$ herokuish paths
-APP_PATH=/app                    # Application path during runtime
-ENV_PATH=/tmp/env                # Path to files for defining base environment
-BUILD_PATH=/tmp/build            # Working directory during builds
-CACHE_PATH=/tmp/cache            # Buildpack cache location
-IMPORT_PATH=/tmp/app             # Mounted path to copy to app path
-BUILDPACK_PATH=/tmp/buildpacks   # Path to installed buildpacks
-
-```
-
-#### Entrypoints
-
-Some subcommands are made to be used as default commands or entrypoint commands for containers. Specifically, herokuish detects if it was called as `/start`, `/exec`, or `/build` which will shortcut it to running those subcommands directly. This means you can either install the binary in those locations or create symlinks from those locations, allowing you to use them as your container entrypoint.
-
-#### Help
-
-Don't be afraid of the help command. It actually tells you exactly what a command does:
-
-```
-$ herokuish help slug export
-slug-export <url>
-  Export generated slug tarball to URL (PUT) or STDOUT
-
-slug-export ()
-{
-    declare desc="Export generated slug tarball to URL (PUT) or STDOUT";
-    declare url="$1";
-    if [[ ! -f "$slug_path" ]]; then
-        return 1;
-    fi;
-    if [[ -n "$url" ]]; then
-        curl -0 -s -o /dev/null --retry 2 -X PUT -T "$slug_path" "$url";
-    else
-        cat "$slug_path";
-    fi
-}
-
-```
-
-## Using Herokuish to test Heroku/Dokku apps
-
-Having trouble pushing an app to Dokku or Heroku? Use Herokuish with a local Docker
-instance to debug. This is especially helpful with Dokku to help determine if it's a buildpack
-issue or an issue with Dokku. Buildpack issues should be filed against Herokuish.
-
-#### Running an app against Herokuish
-
-```
-$ docker run --rm -v /abs/app/path:/tmp/app gliderlabs/herokuish /bin/herokuish test
-```
-
-Mounting your local app source directory to `/tmp/app` and running `/bin/herokuish test` will run your app through the buildpack compile process. Then it starts your `web` process and attempts to connect to the web root path. If it runs into a problem, it should exit non-zero.
-
-```
-::: BUILDING APP :::
------> Ruby app detected
------> Compiling Ruby/Rack
------> Using Ruby version: ruby-1.9.3
-  ...
+	# 1. Build your docker image
 	
-```
-
-You can use this output when you submit issues.
-
-## Contributing
-
-Pull requests are welcome! Herokuish is written in Bash and Go. Please conform to the [Bash styleguide](https://github.com/progrium/bashstyle) used for this project when writing Bash.
-
-Developers should have Go installed with cross-compile support for Darwin and Linux. Tests will require Docker to be available. If you have OS X, we recommend boot2docker.
-
-For help and discussion beyond Github Issues, join us on Freenode in `#gliderlabs`.
-
-## Releases
-
-Anybody can propose a release. First bump the version in `Makefile`, make sure `CHANGELOG.md` is up to date, and make sure tests are passing. Then open a Pull Request from `master` into the `release` branch. Once a maintainer approves and merges, CircleCI will build a release and upload it to Github.
-
-## Acknowledgements
-
-This project was sponsored and made possible by the [Deis Project](http://deis.io).
-
-That said, herokuish was designed based on the experience developing and re-developing Heroku compatibility in Dokku, Deis, and Flynn. Herokuish is based on code from all three projects, as such, thank you to all the contributors of those projects.
-
-In fact, since I hope this is the final implementation of Heroku emulation I'm involved with, I'd like to finally thank Matt Freeman ([@nonuby](https://twitter.com/nonuby)). I've been more or less copy-and-pasting code he originally wrote for the now defunct [OpenRoku](https://github.com/openruko) since 2012.
-
-Lastly, thank you Heroku for pioneering such a great platform and inspiring all of us to try and take it further.
+	export IMAGE_NAME=myherokuish
+	export STACK_URL=https://github.com/pahaz/herokuish.git
+	(git clone ${STACK_URL} /tmp/buildstep && cd /tmp/buildstep && sudo make && cd -)
+	
+	# Now you have a `myherokuish:dev` docker image
+	
+	# 2. Build you project source
+	
+	export SOURCE=/tmp/buildstep/buildpacks/buildpack-python/tests/python-flask
+	export CACHE=/tmp
+	export BUILD_IMAGE_NAME=myherokuish__flask
+	docker run -e "DOCKER_BUILD=1" -e "PORT=5000" -p "5000" -d herokuish:dev /build
+	BUILD_ID=$(docker run -e "DOCKER_BUILD=1" -v "${SOURCE}:/tmp/app" -v "${CACHE}:/tmp/cache" -it ${IMAGE_NAME} /build)
+	docker commit ${BUILD_ID} ${BUILD_IMAGE_NAME}
+	
+	# 3. Run built image
+	
+	docker run -e "PORT=5000" -p "5000" -d ${BUILD_IMAGE_NAME} /start
+	
+	# Now you have a built runned container
+	docker ps  # see result
 
 ## License
 
