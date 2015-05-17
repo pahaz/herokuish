@@ -37,7 +37,7 @@ test-deps: runtime-deps deps-go
 	mkdir ${ROOT_DIR}/.go || true
 	go get -u github.com/progrium/basht/...
 
-test: test-deps
+test:
 	docker version
 	go version
 	basht tests/*/tests.sh
