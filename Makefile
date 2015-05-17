@@ -1,6 +1,6 @@
-NAME=herokuish
+IMAGE_NAME?=herokuish
+IMAGE_VERSION?=dev
 HARDWARE=$(shell uname -m)
-VERSION=0.3.0
 ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
 GOPATH:=${ROOT_DIR}/.go
@@ -11,7 +11,7 @@ export PATH
 
 build:
 	cat buildpacks/*/buildpack* | sed 'N;s/\n/ /' > include/buildpacks.txt
-	@docker build -t $(NAME):dev .
+	@docker build -t $(IMAGE_NAME):$(IMAGE_VERSION) .
 
 deps-add-apt-repository:
 	command -v add-apt-repository > /dev/null || apt-get install software-properties-common -y
