@@ -14,10 +14,8 @@ build:
 	@docker build -t $(NAME):dev .
 
 deps-add-apt-repository:
-	if ! command -v add-apt-repository > /dev/null; then
-	    apt-get install software-properties-common -y
-	    [[ `lsb_release -sr` == "12.04" ]] && apt-get install python-software-properties -y
-	fi
+	command -v add-apt-repository > /dev/null || apt-get install software-properties-common -y
+	command -v add-apt-repository > /dev/null || ([ `lsb_release -sr` == "12.04" ] && apt-get install python-software-properties -y)
 
 deps-go: deps-add-apt-repository
 	add-apt-repository ppa:duh/golang -y
