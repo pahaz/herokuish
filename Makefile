@@ -13,8 +13,13 @@ build:
 	cat buildpacks/*/buildpack* | sed 'N;s/\n/ /' > include/buildpacks.txt
 	@docker build -t $(NAME):dev .
 
-deps-go:
-	apt-get install python-software-properties -y # 12.04
+deps-add-apt-repository:
+	if ! command -v add-apt-repository > /dev/null; then
+	    apt-get install software-properties-common -y
+	    [[ `lsb_release -sr` == "12.04" ]] && apt-get install python-software-properties -y
+	fi
+
+deps-go: deps-add-apt-repository
 	add-apt-repository ppa:duh/golang -y
 	apt-get update
 	apt-get install golang -y
@@ -30,7 +35,7 @@ runtime-deps:
 	apt-get install python-yaml -y  # python yaml parser for herokuish.bash
 	apt-get install daemontools -y  # setuidgid (runs another program under a specified account's uid and gid) for include/herokuish.bash
 
-test-deps: runtime-deps
+test-deps: runtime-deps deps-go
 	mkdir ${ROOT_DIR}/.go || true
 	go get -u github.com/progrium/basht/...
 
