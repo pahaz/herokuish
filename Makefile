@@ -1,8 +1,7 @@
 IMAGE_NAME?=herokuish
 IMAGE_VERSION?=dev
-HARDWARE=$(shell uname -m)
-ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
+ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 GOPATH:=${ROOT_DIR}/.go
 PATH:=$(PATH):${GOPATH}/bin
 export DEBIAN_FRONTEND=noninteractive
