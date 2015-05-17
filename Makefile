@@ -9,7 +9,7 @@ export DEBIAN_FRONTEND=noninteractive
 export GOPATH
 export PATH
 
-build:
+build: runtime-deps
 	cat buildpacks/*/buildpack* | sed 'N;s/\n/ /' > include/buildpacks.txt
 	@docker build -t $(IMAGE_NAME):$(IMAGE_VERSION) .
 
@@ -25,13 +25,13 @@ deps-go: deps-add-apt-repository
 
 deps-docker:
 	# http://docs.docker.com/installation/ubuntulinux/
-	@command -v docker > /dev/null || curl -sSL https://get.docker.io/ubuntu/ | sudo sh
+	command -v docker > /dev/null || curl -sSL https://get.docker.io/ubuntu/ | sudo sh
 	sleep 2 # give docker a moment i guess
 	docker version
 
 runtime-deps:
-	apt-get install python-yaml -y  # python yaml parser for herokuish.bash
-	apt-get install daemontools -y  # setuidgid (runs another program under a specified account's uid and gid) for include/herokuish.bash
+	python -c "import yaml" || apt-get install python-yaml -y  # python yaml parser for herokuish.bash
+	command -v setuidgid > /dev/null || apt-get install daemontools -y  # setuidgid (runs another program under a specified account's uid and gid) for include/herokuish.bash
 
 test-deps: runtime-deps deps-go
 	mkdir ${ROOT_DIR}/.go || true
